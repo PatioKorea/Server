@@ -1,0 +1,14 @@
+C:\Users\hihit\OneDrive\문서\GitHub\ServerLearning\ServerCore\bin\Debug\netcoreapp3.1\ServerCore.exe
+C:\Users\hihit\OneDrive\문서\GitHub\ServerLearning\ServerCore\bin\Debug\netcoreapp3.1\ServerCore.deps.json
+C:\Users\hihit\OneDrive\문서\GitHub\ServerLearning\ServerCore\bin\Debug\netcoreapp3.1\ServerCore.runtimeconfig.json
+C:\Users\hihit\OneDrive\문서\GitHub\ServerLearning\ServerCore\bin\Debug\netcoreapp3.1\ServerCore.runtimeconfig.dev.json
+C:\Users\hihit\OneDrive\문서\GitHub\ServerLearning\ServerCore\bin\Debug\netcoreapp3.1\ServerCore.dll
+C:\Users\hihit\OneDrive\문서\GitHub\ServerLearning\ServerCore\bin\Debug\netcoreapp3.1\ServerCore.pdb
+C:\Users\hihit\OneDrive\문서\GitHub\ServerLearning\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.csproj.AssemblyReference.cache
+C:\Users\hihit\OneDrive\문서\GitHub\ServerLearning\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\hihit\OneDrive\문서\GitHub\ServerLearning\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.AssemblyInfoInputs.cache
+C:\Users\hihit\OneDrive\문서\GitHub\ServerLearning\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.AssemblyInfo.cs
+C:\Users\hihit\OneDrive\문서\GitHub\ServerLearning\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.csproj.CoreCompileInputs.cache
+C:\Users\hihit\OneDrive\문서\GitHub\ServerLearning\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.dll
+C:\Users\hihit\OneDrive\문서\GitHub\ServerLearning\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.pdb
+C:\Users\hihit\OneDrive\문서\GitHub\ServerLearning\ServerCore\obj\Debug\netcoreapp3.1\ServerCore.genruntimeconfig.cache
