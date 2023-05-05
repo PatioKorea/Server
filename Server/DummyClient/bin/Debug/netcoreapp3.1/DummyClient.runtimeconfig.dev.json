@@ -1,8 +1,8 @@
 {
   "runtimeOptions": {
     "additionalProbingPaths": [
-      "C:\\Users\\hihit\\.dotnet\\store\\|arch|\\|tfm|",
-      "C:\\Users\\hihit\\.nuget\\packages"
+      "/Users/patio/.dotnet/store/|arch|/|tfm|",
+      "/Users/patio/.nuget/packages"
     ]
   }
 }

@@ -1,19 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 
 namespace ServerCore
 {
+    // Script Info : 손님과 연결할 수 있는 문지기를 생성한다 
+
     public class Listener
     {
         Socket _listenSocket;
-        Action<Socket> _onAcceptHandler; // 모든 작업이 끝나고 콜백되는 이벤트
+        //Action<Socket> _onAcceptHandler; // 모든 작업이 끝나고 콜백되는 이벤트
+        // 바로위에 코드와 다른 점은 Action은 받는 인자가 있고 Func는 뱉어주는 인자가 있다 
+        Func<Session> _sessionFactory; // Session을 뱉어준다 
 
-        public void Init(IPEndPoint endPoint, Action<Socket> onAcceptHandler)
+        public void Init(IPEndPoint endPoint, Func<Session> sessionFactory)
         {
             _listenSocket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            _onAcceptHandler += onAcceptHandler; // 모든 작업이 끝남을 알려주는 이벤트 등록
+            _sessionFactory += sessionFactory; // 모든 작업이 끝남을 알려주는 이벤트 등록
 
             _listenSocket.Bind(endPoint); // 문지기 교육
             _listenSocket.Listen(10);// backlog -> 10 : 최대 대기수
@@ -48,10 +51,14 @@ namespace ServerCore
             if (args.SocketError == SocketError.Success)
             {// 오류가 없이 정상적일때
 
+                // 컨텐츠단에서 처리하는 것이 아닌 엔진쪽에서 처리한다 
+                Session session = _sessionFactory.Invoke(); // Func의 Invoke( 이벤트실행 )은 <T>값을 뱉어준다 
+                session.Start(args.AcceptSocket);
+                session.OnConnected(args.AcceptSocket.RemoteEndPoint); // 아래 이벤트핸들러의 기능을 대신한다 
+
                 // 이벤트 핸들러를 이용해서 원래의 Accept함수처럼 Socket을 뱉어준다
                 // 하지만 이벤트 핸들러 속 Socket을 초기화하지않으면 아래의 소켓이 재사용 될 수 있음을 알아야 한다
-                _onAcceptHandler.Invoke(args.AcceptSocket);
-
+                //  _onAcceptHandler.Invoke(args.AcceptSocket);
             }
             else
                 Console.WriteLine(args.SocketError.ToString());

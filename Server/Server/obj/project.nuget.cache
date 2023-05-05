@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "FI/PEIoEiAi5LCPFjaiVI63VnH2p9v3cs+Yk+i957Qfc98OdAo4U3aZbjH9GZ1XY2e7C6Qi0VQ3OSUzgdCH2bg==",
+  "dgSpecHash": "ZoyDWBAjHOJsRFUaGofHZ+2HUSpeGuUyAXskyG4OzAAlTE9v8iysQmOVnJQ5aTJoqRMdNhPxl/cNq08bKb1DOA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\hihit\\OneDrive\\문서\\GitHub\\ServerLearning\\Server\\Server.csproj",
+  "projectFilePath": "/Users/patio/Documents/GitHub/Server/Server/Server/Server.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

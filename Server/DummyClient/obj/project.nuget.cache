@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "c9ousQGTyJQUIWt0hnzO5gr+Lrh765oIRS2IKnGydm9UgmvE+2/t4qpPIKyNxmPoFRTEYRugCWY/TiEX+dLuKg==",
+  "dgSpecHash": "VDC1AXOH2hmRThSc2Bwhuyc9vT1Ml4SNKW+9RGrGBHLfgZ2lx8Ke+bY1z4cDDFJ/wEF1wAIAMCgpYKPr/Vn9fQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\hihit\\OneDrive\\문서\\GitHub\\ServerLearning\\DummyClient\\DummyClient.csproj",
+  "projectFilePath": "/Users/patio/Documents/GitHub/Server/Server/DummyClient/DummyClient.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

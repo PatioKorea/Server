@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
+    <ProjectReference Include="..\ServerCore\ServerCore.csproj" />
   </ItemGroup>
-
 </Project>
