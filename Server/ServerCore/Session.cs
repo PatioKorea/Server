@@ -15,6 +15,8 @@ namespace ServerCore
         Socket _socket;
         int _disconnected = 0;
 
+        RecvBuffer _recvBuffer = new RecvBuffer(1024);
+
         Object _lock = new object();
         Queue<byte[]> _sendQueue = new Queue<byte[]>();
         // Send의 과정중에 처리가 끝나지 않았다면 Queue에 쌓아둘지 아닐지 판단하는 변수 
@@ -28,7 +30,7 @@ namespace ServerCore
         // 추상함수로써 Session을 상속받은 얘를 컨텐츠단에서 사용하게 된다
         // ** 이름그대로의 기능을 실행하는 것이 아닌 실행되었을때 하고 싶은 행동들을 하는 함수들 ( 콜백느낌 ) **
         public abstract void OnConnected(EndPoint endPoint);
-        public abstract void OnRecv(ArraySegment<byte> buffer);
+        public abstract int  OnRecv(ArraySegment<byte> buffer); // 데이터를 받은 양을 뱉음 
         public abstract void OnSend(int numOfBytes);
         public abstract void OnDisconnected(EndPoint endPoint);
 
@@ -38,10 +40,8 @@ namespace ServerCore
         {
             _socket = socket;
 
-            _recvArgs.Completed += new EventHandler<SocketAsyncEventArgs>(OnRecvCompleted);
-            _recvArgs.SetBuffer(new byte[1024], 0, 1024); // recv가 실행되었을때 받을 버퍼를 미리 설정 
-
             // 다른곳에서 할 필요 없다 이곳에서 함 
+            _recvArgs.Completed += new EventHandler<SocketAsyncEventArgs>(OnRecvCompleted);
             _sendArgs.Completed += new EventHandler<SocketAsyncEventArgs>(OnSendCompleted);
 
             ResisterRecv();
@@ -141,6 +141,12 @@ namespace ServerCore
 
         void ResisterRecv()
         {
+            _recvBuffer.Clean(); // 버그발생 차단 
+            // 받을 수 있는 범위만큼 _recvBuffer에서 Array를 새로 만들어주었기 때문에
+            // SetBuffer로 넘겨주기만 한다 
+            ArraySegment<byte> segment = _recvBuffer.WriteSegment;
+            _recvArgs.SetBuffer(segment.Array, segment.Offset, segment.Count);
+
             bool pending = _socket.ReceiveAsync(_recvArgs);
             if (pending == false)
             {
@@ -157,10 +163,34 @@ namespace ServerCore
                 {
                     try
                     {
-                        // 추상 함수 ( recv한것을 알려준다 ) 아래의 기능을 수행한다 
-                        OnRecv(new ArraySegment<byte>(args.Buffer, args.Offset, args.BytesTransferred));
+                        // Write 커서 이동 / if문 조건에 있어도 OnWrite함수는 실행됨 
+                        if(_recvBuffer.OnWrite(args.BytesTransferred) == false)
+                        {
+                            // 버그발생 근데 거의도 아니고 99.9%발생하지 않음 
+                            Disconnect();
+                            return;
+                        }
+
+
+                        // OnRecv : 추상 함수 ( recv한것을 알려준다 ) 이 문단 아래의 기능을 수행한다
+                        // 컨텐츠 쪽으로 데이터를 넘겨주고 얼마나 처리했는지 받는다 
+                        int processLen = OnRecv(_recvBuffer.ReadSegment);
+                        if(processLen < 0 || _recvBuffer.DataSize < processLen)
+                        {
+                            // 버그발생 
+                            Disconnect();
+                            return;
+                        }
                         //string recvData = Encoding.UTF8.GetString(args.Buffer, args.Offset, args.BytesTransferred);
                         //Console.WriteLine($"클라이언트(유저)로 부터 온 메세지 : {recvData}");
+
+                        // Read 커서 이동 / if문 조건에 있어도 OnRead함수는 실행됨 
+                        if (_recvBuffer.OnRead(processLen) == false)
+                        {
+                            // 버그발생 
+                            Disconnect();
+                            return;
+                        }
 
                         ResisterRecv();
                     }
