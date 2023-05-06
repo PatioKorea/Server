@@ -10,6 +10,46 @@ using System.Threading;
 
 namespace ServerCore
 {
+    public abstract class PacketSession : Session
+    {
+        public static readonly int HeaderSize = 2;
+
+        // *부터-------------------------------*까지 : 완성형 패킷 
+        // [size(2)] [packetId(2)] [contents..] [size(2)] [packetId(2)] [contents..]  <= buffer 전체
+        // sealed : 더이상 이 추상함수의 정의를 Override할 수 없음 여기가 마지노선 (봉인 )
+        public sealed override int OnRecv(ArraySegment<byte> buffer)
+        {
+            // 처리된 데이터 양 
+            int processLen = 0;
+
+            while (true)
+            {
+                // 최소한의 헤더는 파싱할 수 있는지 확인 
+                if (buffer.Count < HeaderSize)
+                    break;
+
+                // 패킷이 완성형으로 도착 했는가
+                ushort dataSize = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
+                if (buffer.Count < dataSize)
+                    break;
+
+                // 패킷 조립 가능
+                // 실제로 처리해야 할 범위를 찝어주고 그 버퍼를 넘겨준다 ( 패킷의 완성형 : size 부터 contents 까지 범위 )
+                OnRecvPacket(new ArraySegment<byte>(buffer.Array, buffer.Offset, dataSize));
+                // buffer.Slice( Array 범위 )로 buffer를 잘라서 넘겨줄 수 있지만 가독성면에서 위의 코드가 더 좋다
+                // 또한 ArraySegment는 구조체라서 힙 영역에 할당되기 때문에 new를 남발해도 별 상관이 없다 
+
+                processLen += dataSize;
+                // 커서를 옮기는 개념과 비슷하다. 한 패킷단위를 처리했으니 다음 패킷의 위치로 재 조정을 해주는 코드 
+                buffer = new ArraySegment<byte>(buffer.Array, buffer.Offset + dataSize, buffer.Count - dataSize);
+            }
+
+            return processLen;
+        }
+
+        public abstract void OnRecvPacket(ArraySegment<byte> buffer);
+    }
+
     public abstract class Session
     {
         Socket _socket;
@@ -18,7 +58,7 @@ namespace ServerCore
         RecvBuffer _recvBuffer = new RecvBuffer(1024);
 
         Object _lock = new object();
-        Queue<byte[]> _sendQueue = new Queue<byte[]>();
+        Queue<ArraySegment<byte>> _sendQueue = new Queue<ArraySegment<byte>>();
         // Send의 과정중에 처리가 끝나지 않았다면 Queue에 쌓아둘지 아닐지 판단하는 변수 
         // 보류중인 데이터 리스트들 ( Queue에 쌓아두었던 버퍼를 List로 뭉치는 변수 )
         List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
@@ -48,12 +88,12 @@ namespace ServerCore
         }
 
         // Recv처럼 올때까지 계속기다리는 것이 아닌 보내고 싶을때만 호출하는 방식 
-        public void Send(byte[] sendBuffer)
+        public void Send(ArraySegment<byte> sendBuff)
         {
             lock (_lock)
             {
                 // 보낼 버퍼를 Queue에 삽입 
-                _sendQueue.Enqueue(sendBuffer);
+                _sendQueue.Enqueue(sendBuff);
                 if (_pendingList.Count == 0)
                 {
                     //내가 처음으로 Send를 호출했을때 
@@ -92,9 +132,9 @@ namespace ServerCore
             // Queue 에 저장하기 보다 Args안에 버퍼리스트를 활용해서 되도록 한번에 처리하도록한다 ( 뭉친다 )
             while(_sendQueue.Count > 0)
             {
-                byte[] buff = _sendQueue.Dequeue(); // 넣어놓았던 큐의 처리
+                ArraySegment<byte> buff = _sendQueue.Dequeue(); // 넣어놓았던 큐의 처리
                 // 아래의 리스트들은 SendAsync가 모두 처리되도록 한다 
-                _pendingList.Add(new ArraySegment<byte>(buff, 0, buff.Length));
+                _pendingList.Add(buff);
             }
 
             _sendArgs.BufferList = _pendingList;
