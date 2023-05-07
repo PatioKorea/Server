@@ -7,54 +7,6 @@ using ServerCore;
 
 namespace Server
 {
-    class Packet
-    {
-        // ushort : 2bite / int : 4bite MMO 서버에선 엄청난 크기 차이 
-        public ushort size;
-        public ushort packetId;
-    }
-
-    class GameSession : PacketSession
-    {
-        public override void OnConnected(EndPoint endPoint)
-        {
-            Console.WriteLine($"OnConnected : {endPoint}");
-
-            //Packet packet = new Packet() { size = 100, packetId = 10 };
-
-            //ArraySegment<byte> openSegment = SendBufferHelper.Open(4096);
-            //byte[] buffer = BitConverter.GetBytes(packet.size);
-            //byte[] buffer2 = BitConverter.GetBytes(packet.packetId);
-            //Array.Copy(buffer, 0, openSegment.Array, openSegment.Offset, buffer.Length);
-            //Array.Copy(buffer2, 0, openSegment.Array, openSegment.Offset + buffer.Length, buffer2.Length);
-            //ArraySegment<byte> sendBuff = SendBufferHelper.Close(buffer.Length + buffer2.Length);
-            //byte[] sendBuff = Encoding.UTF8.GetBytes("서버에 접속하셨습니다 !!");
-
-            //Send(sendBuff);
-
-            Thread.Sleep(5000);
-            Disconnect();
-        }
-
-        public override void OnRecvPacket(ArraySegment<byte> buffer)
-        {
-            ushort size = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
-            ushort id = BitConverter.ToUInt16(buffer.Array, buffer.Offset + 2);
-            Console.WriteLine($"RecvPacket [ Size : {size} , Id : {id}");
-        }
-
-        public override void OnDisconnected(EndPoint endPoint)
-        {
-            Console.WriteLine($"OnDisconnected : {endPoint}");
-        }
-
-        public override void OnSend(int numOfBytes)
-        {
-            Console.WriteLine($"Transferred bytes : {numOfBytes}");
-        }
-    }
-
-
     class Program
     {
         static Listener _listener = new Listener();
@@ -68,7 +20,7 @@ namespace Server
 
             // 누가 서버에 들어왔을때 OnAcceptHandler 라는 얘로 알림( 함수호출 )을 받는다
             // 변경 : Func<>로 GameSession을 받는다 ( 객체생성과 함께 )
-            _listener.Init(endPoint, () => { return new GameSession(); });
+            _listener.Init(endPoint, () => { return new ClientSession(); });
 
             Console.WriteLine("서버 기다리는 중...");
 
