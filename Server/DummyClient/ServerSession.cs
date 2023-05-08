@@ -88,7 +88,7 @@ namespace DummyClient
             //skill List 읽어들이기 
             skills.Clear(); // 혹시모를 상황이 있을까봐 
             ushort skillLen = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
-            count += skillLen;
+            count += sizeof(ushort);
 
             // 루프를 돌면서 skill객체를 List에 밀어넣는다 나중에 List데이터를 참조해서 사용할수 있음 
             for(int i = 0; i < skillLen; i++)
