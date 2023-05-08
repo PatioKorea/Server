@@ -18,6 +18,8 @@ namespace DummyClient
 
             Connector connector = new Connector(); // 서버와 통신할 소켓생성 
 
+            Thread.Sleep(100);
+
             connector.Connect(endPoint, () => { return new ServerSession(); });
 
             while (true)
