@@ -8,22 +8,22 @@ using ServerCore;
 
 namespace DummyClient
 {
-    public abstract class Packet
-    {
-        // ushort : 2bite / int : 4bite MMO 서버에선 엄청난 크기 차이 
-        public ushort size;
-        public ushort packetId;
+    //public abstract class Packet
+    //{
+    //    // ushort : 2bite / int : 4bite MMO 서버에선 엄청난 크기 차이 
+    //    public ushort size;
+    //    public ushort packetId;
 
-        public abstract ArraySegment<byte> Write();
-        public abstract void Read(ArraySegment<byte> s);
-    }
+    //    public abstract ArraySegment<byte> Write();
+    //    public abstract void Read(ArraySegment<byte> s);
+    //}
 
-    class PlayerInfoReq : Packet
+    class PlayerInfoReq
     {
         public long playerId;
         public string name;
 
-        public struct SkillInfo
+        public struct Skill
         {
             public int id;
             public short level;
@@ -60,14 +60,14 @@ namespace DummyClient
         }
 
         // 구조체를 가지고 있는 배열 
-        public List<SkillInfo> skills = new List<SkillInfo>();
+        public List<Skill> skills = new List<Skill>();
 
-        public PlayerInfoReq()
-        {
-            this.packetId = (ushort)PacketID.PlayerInfoReq;
-        }
+        //public PlayerInfoReq()
+        //{
+        //    this.packetId = (ushort)PacketID.PlayerInfoReq;
+        //}
 
-        public override void Read(ArraySegment<byte> segment)
+        public void Read(ArraySegment<byte> segment)
         {
             ushort count = 0;
 
@@ -93,13 +93,13 @@ namespace DummyClient
             // 루프를 돌면서 skill객체를 List에 밀어넣는다 나중에 List데이터를 참조해서 사용할수 있음 
             for(int i = 0; i < skillLen; i++)
             {
-                SkillInfo skill = new SkillInfo();
+                Skill skill = new Skill();
                 skill.Read(s, ref count);
                 skills.Add(skill);
             }
         }
 
-        public override ArraySegment<byte> Write()
+        public ArraySegment<byte> Write()
         {
             // 포인터 같이 Array를 받고 여기서 수정해도 Open된 Array가 수정되고 적용된다 
             ArraySegment<byte> segment = SendBufferHelper.Open(4096);
@@ -114,7 +114,7 @@ namespace DummyClient
             // Slice() span값자체가 잘라지지 않고 잘라낸 부분만 span타입으로 반환한다 
             count += sizeof(ushort);
             success &=
-                BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.packetId);
+                BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.PlayerInfoReq);
             count += sizeof(ushort);
             success &=
                 BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.playerId);
@@ -143,7 +143,7 @@ namespace DummyClient
             //SkillInfo list
             success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)skills.Count);
             count += sizeof(ushort);
-            foreach (SkillInfo skill in skills)
+            foreach (Skill skill in skills)
             {
                 // 리스트를 하나씩 밀어넣어준다 구조체 안에 함수를 이용함 
                 success &= skill.write(s, ref count);
@@ -181,10 +181,10 @@ namespace DummyClient
 
             PlayerInfoReq packet = new PlayerInfoReq()
             { playerId = 1001 , name = "ABCD"};
-            packet.skills.Add(new PlayerInfoReq.SkillInfo() { id = 101, level = 1, duration = 3.0f });
-            packet.skills.Add(new PlayerInfoReq.SkillInfo() { id = 201, level = 2, duration = 4.0f });
-            packet.skills.Add(new PlayerInfoReq.SkillInfo() { id = 301, level = 3, duration = 5.0f });
-            packet.skills.Add(new PlayerInfoReq.SkillInfo() { id = 401, level = 4, duration = 6.0f });
+            packet.skills.Add(new PlayerInfoReq.Skill() { id = 101, level = 1, duration = 3.0f });
+            packet.skills.Add(new PlayerInfoReq.Skill() { id = 201, level = 2, duration = 4.0f });
+            packet.skills.Add(new PlayerInfoReq.Skill() { id = 301, level = 3, duration = 5.0f });
+            packet.skills.Add(new PlayerInfoReq.Skill() { id = 401, level = 4, duration = 6.0f });
 
             //for (int i = 0; i < 5; i++)
             {

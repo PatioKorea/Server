@@ -23,7 +23,7 @@ namespace Server
         public long playerId;
         public string name;
 
-        public struct SkillInfo
+        public struct Skill
         {
             public int id;
             public short level;
@@ -60,7 +60,7 @@ namespace Server
         }
 
         // 구조체를 가지고 있는 배열 
-        public List<SkillInfo> skills = new List<SkillInfo>();
+        public List<Skill> skills = new List<Skill>();
 
         public PlayerInfoReq()
         {
@@ -93,7 +93,7 @@ namespace Server
             // 루프를 돌면서 skill객체를 List에 밀어넣는다 나중에 List데이터를 참조해서 사용할수 있음 
             for (int i = 0; i < skillLen; i++)
             {
-                SkillInfo skill = new SkillInfo();
+                Skill skill = new Skill();
                 skill.Read(s, ref count);
                 skills.Add(skill);
             }
@@ -143,7 +143,7 @@ namespace Server
             //SkillInfo list
             success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)skills.Count);
             count += sizeof(ushort);
-            foreach (SkillInfo skill in skills)
+            foreach (Skill skill in skills)
             {
                 // 리스트를 하나씩 밀어넣어준다 구조체 안에 함수를 이용함 
                 success &= skill.write(s, ref count);
@@ -210,7 +210,7 @@ namespace Server
                         //count += 8;
                         Console.WriteLine($"PlayerInfoReq : {req.playerId} , {req.name}");
 
-                        foreach (PlayerInfoReq.SkillInfo skill in req.skills)
+                        foreach (PlayerInfoReq.Skill skill in req.skills)
                         {
                             Console.WriteLine($"Skill : {skill.id} , {skill.level} , {skill.duration}");
                         }
