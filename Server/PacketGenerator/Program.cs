@@ -7,17 +7,29 @@ namespace PacketGenerator
     class Program
     {
         static string genPackets;
+        static ushort packetId; // 패킷개수 카운팅 변수 
+        static string packetEnums;
 
+        // args 를 외부의 bat파일에서 인자를 넘겨줄 수 있음 
         static void Main(string[] args)
         {
+            // ../ : 찾는 경로에서 뒤로가기한 위치로 이동 
+            string pdlPath = "../PDL.xml";
+
             XmlReaderSettings settings = new XmlReaderSettings()
             {
                 IgnoreComments = true,
                 IgnoreWhitespace = true,
             };
 
+            //프로그램이 시작될때 인자로 넘겨주었다면 (1개 이상)
+            if(args.Length >= 1)
+            {
+                pdlPath = args[0];
+            }
+
             // using : 이 구문이 끝나면 자동으로 dispose(xml파일을 닫는다)가 실행된다 
-            using (XmlReader r = XmlReader.Create("PDL.xml", settings))
+            using (XmlReader r = XmlReader.Create(pdlPath, settings))
             {
                 r.MoveToContent(); // <PDL>구문안으로 들어감
 
@@ -29,8 +41,9 @@ namespace PacketGenerator
                     //Console.WriteLine(r.Name + " " + r["name"]);
                 }
 
+                string fileText = string.Format(PacketFormat.fileFormat, packetEnums, genPackets);
                 // 만든 템플릿을 하나의 파일로 만든다 (만들파일 , 자동화코드)
-                File.WriteAllText("GenPacket.cs", genPackets);
+                File.WriteAllText("GenPacket.cs", fileText);
             }
         }
 
@@ -57,8 +70,13 @@ namespace PacketGenerator
 
             Tuple<string, string, string> t = ParseMembers(r);
             // (쓸 템플릿 코드변수, {0}, {1} ...계속 )
-            genPackets = string.Format(PacketFormat.packetFormat,
+            genPackets += string.Format(PacketFormat.packetFormat,
                 packetName, t.Item1, t.Item2, t.Item3);
+            // 패킷이 추가 될때마다 패킷 열거형이 늘어난다 
+            packetEnums += string.Format(PacketFormat.packetEnumFormat
+                , packetName, ++packetId)
+                + Environment.NewLine + "\t"; // 엔터키누른거 같이 정렬 
+
         }
 
         // {1} 멤버 변수들 
@@ -100,8 +118,16 @@ namespace PacketGenerator
                 string memberType = r.Name.ToLower();
                 switch (memberType)
                 {
-                    case "bool":
                     case "byte":
+                    case "sbyte":
+                        memberCode += string.Format(PacketFormat.memberFormat,
+                            memberType, memberName);
+                        readCode += string.Format(PacketFormat.readByteFormat,
+                            memberName, memberType);
+                        writeCode += string.Format(PacketFormat.writeByteFormat,
+                             memberName, memberType);
+                        break;
+                    case "bool":
                     case "short":
                     case "ushort":
                     case "int":

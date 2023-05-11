@@ -8,4 +8,10 @@
   <ItemGroup>
     <ProjectReference Include="..\ServerCore\ServerCore.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Packet\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Packet\" />
+  </ItemGroup>
 </Project>
