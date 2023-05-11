@@ -1,81 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "/Users/patio/Documents/GitHub/Server/Server/Server/Server.csproj": {}
+    "C:\\Users\\hihit\\OneDrive\\문서\\GitHub\\Server\\Server\\Server\\Server.csproj": {}
   },
   "projects": {
-    "/Users/patio/Documents/GitHub/Server/Server/Server/Server.csproj": {
+    "C:\\Users\\hihit\\OneDrive\\문서\\GitHub\\Server\\Server\\ServerCore\\ServerCore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/patio/Documents/GitHub/Server/Server/Server/Server.csproj",
-        "projectName": "Server",
-        "projectPath": "/Users/patio/Documents/GitHub/Server/Server/Server/Server.csproj",
-        "packagesPath": "/Users/patio/.nuget/packages/",
-        "outputPath": "/Users/patio/Documents/GitHub/Server/Server/Server/obj/",
-        "projectStyle": "PackageReference",
-        "configFilePaths": [
-          "/Users/patio/.config/NuGet/NuGet.Config"
-        ],
-        "originalTargetFrameworks": [
-          "netcoreapp3.1"
-        ],
-        "sources": {
-          "https://api.nuget.org/v3/index.json": {}
-        },
-        "frameworks": {
-          "netcoreapp3.1": {
-            "targetAlias": "netcoreapp3.1",
-            "projectReferences": {
-              "/Users/patio/Documents/GitHub/Server/Server/ServerCore/ServerCore.csproj": {
-                "projectPath": "/Users/patio/Documents/GitHub/Server/Server/ServerCore/ServerCore.csproj"
-              }
-            }
-          }
-        },
-        "warningProperties": {
-          "warnAsError": [
-            "NU1605"
-          ]
-        }
-      },
-      "frameworks": {
-        "netcoreapp3.1": {
-          "targetAlias": "netcoreapp3.1",
-          "imports": [
-            "net461",
-            "net462",
-            "net47",
-            "net471",
-            "net472",
-            "net48"
-          ],
-          "assetTargetFallback": true,
-          "warn": true,
-          "frameworkReferences": {
-            "Microsoft.NETCore.App": {
-              "privateAssets": "all"
-            }
-          },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/5.0.408/RuntimeIdentifierGraph.json"
-        }
-      }
-    },
-    "/Users/patio/Documents/GitHub/Server/Server/ServerCore/ServerCore.csproj": {
-      "version": "1.0.0",
-      "restore": {
-        "projectUniqueName": "/Users/patio/Documents/GitHub/Server/Server/ServerCore/ServerCore.csproj",
+        "projectUniqueName": "C:\\Users\\hihit\\OneDrive\\문서\\GitHub\\Server\\Server\\ServerCore\\ServerCore.csproj",
         "projectName": "ServerCore",
-        "projectPath": "/Users/patio/Documents/GitHub/Server/Server/ServerCore/ServerCore.csproj",
-        "packagesPath": "/Users/patio/.nuget/packages/",
-        "outputPath": "/Users/patio/Documents/GitHub/Server/Server/ServerCore/obj/",
+        "projectPath": "C:\\Users\\hihit\\OneDrive\\문서\\GitHub\\Server\\Server\\ServerCore\\ServerCore.csproj",
+        "packagesPath": "C:\\Users\\hihit\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\hihit\\OneDrive\\문서\\GitHub\\Server\\Server\\ServerCore\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/patio/.config/NuGet/NuGet.Config"
+          "C:\\Users\\hihit\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -108,7 +54,65 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/5.0.408/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.415\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\hihit\\OneDrive\\문서\\GitHub\\Server\\Server\\Server\\Server.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\hihit\\OneDrive\\문서\\GitHub\\Server\\Server\\Server\\Server.csproj",
+        "projectName": "Server",
+        "projectPath": "C:\\Users\\hihit\\OneDrive\\문서\\GitHub\\Server\\Server\\Server\\Server.csproj",
+        "packagesPath": "C:\\Users\\hihit\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\hihit\\OneDrive\\문서\\GitHub\\Server\\Server\\Server\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\hihit\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.1"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.1": {
+            "targetAlias": "netcoreapp3.1",
+            "projectReferences": {
+              "C:\\Users\\hihit\\OneDrive\\문서\\GitHub\\Server\\Server\\ServerCore\\ServerCore.csproj": {
+                "projectPath": "C:\\Users\\hihit\\OneDrive\\문서\\GitHub\\Server\\Server\\ServerCore\\ServerCore.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.415\\RuntimeIdentifierGraph.json"
         }
       }
     }

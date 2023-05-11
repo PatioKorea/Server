@@ -1,15 +1,77 @@
 ﻿using System;
+// @"" 여러줄 string을 쓸 수 있음
+// 가변적인 변수같은거는 {번호}로 써놓으면 된다
+// { : 소괄호 같은건 {를 한번더 붙여 줘야 한다 
+
 namespace PacketGenerator
 {
-    // @"" 여러줄 string을 쓸 수 있음
-    // 가변적인 변수같은거는 {번호}로 써놓으면 된다
-    // { : 소괄호 같은건 {를 한번더 붙여 줘야 한다 
-
-
-    // {0} enum값 / 패킷이름/패킷번호 
-    // {1} 모든 패킷 클래스 코드 / 패킷목록 
     class PacketFormat
     {
+        // {0} 패킷 등록
+        public static string managerFormat =
+@"using ServerCore;
+using System;
+using System.Collections.Generic;
+
+class PacketManager
+{{
+    #region Singleton
+    static PacketManager _instance = new PacketManager();
+    public static PacketManager Instance
+    {{ get {{ return _instance; }} }}
+    #endregion
+
+    PacketManager()
+    {{
+        Register();
+    }}
+
+    Dictionary<ushort, Action<PacketSession, ArraySegment<byte>>> _onRecv 
+        = new Dictionary<ushort, Action<PacketSession, ArraySegment<byte>>>();
+    Dictionary<ushort, Action<PacketSession, IPacket>> _handler
+        = new Dictionary<ushort, Action<PacketSession, IPacket>>();
+
+    public void Register()
+    {{
+{0}
+        
+    }}
+
+    public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)
+    {{
+        ushort count = 0;
+
+        ushort size = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
+        count += 2;
+        ushort id = BitConverter.ToUInt16(buffer.Array, buffer.Offset + count);
+        count += 2;
+
+        Action<PacketSession, ArraySegment<byte>> action = null;
+
+        if (_onRecv.TryGetValue(id, out action))
+            action.Invoke(session, buffer);
+    }}
+
+    void MakePacket<T>(PacketSession session, ArraySegment<byte> buffer) where T : IPacket, new()
+    {{
+        T pkt = new T();
+        pkt.Read(buffer);
+
+        Action<PacketSession, IPacket> action = null;
+
+        if(_handler.TryGetValue(pkt.Protocol, out action))
+            action.Invoke(session, pkt);
+    }}
+}}";
+
+        // {0} 패킷 이름
+        public static string managerRegisterFormat =
+@"       _onRecv.Add((ushort)PacketID.{0}, MakePacket<{0}>);
+        _handler.Add((ushort)PacketID.{0}, PacketHandler.{0}Handler);";
+
+
+        // {0} enum값 / 패킷이름/패킷번호 
+        // {1} 모든 패킷 클래스 코드 / 패킷목록 
         public static string fileFormat =
 @"using System;
 using System.Collections.Generic;
@@ -22,7 +84,15 @@ public enum PacketID
     {0}
 }}
 
+interface IPacket
+{{
+	ushort Protocol {{ get; }}
+	void Read(ArraySegment<byte> segment);
+	ArraySegment<byte> Write();
+}};
+
 {1}
+
 ";
 
         // {0} 패킷 이름
@@ -37,9 +107,11 @@ public enum PacketID
         // {3} 멤버 변수 Write
         public static string packetFormat =
 @"
-class {0}
+class {0} : IPacket
 {{
     {1}
+
+    public ushort Protocol {{ get {{ return (ushort)PacketID.{0}; }} }}
 
     public void Read(ArraySegment<byte> segment)
     {{

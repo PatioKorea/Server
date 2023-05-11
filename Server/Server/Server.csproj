@@ -11,7 +11,4 @@
   <ItemGroup>
     <None Remove="Packet\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Packet\" />
-  </ItemGroup>
 </Project>

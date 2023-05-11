@@ -14,18 +14,21 @@ namespace ServerCore
     {
         Func<Session> _sessionFactory; // Session을 뱉어준다 
 
-        public void Connect(IPEndPoint endPoint, Func<Session> sessionFactory)
+        public void Connect(IPEndPoint endPoint, Func<Session> sessionFactory, int count = 1)
         {
-            Socket socket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            for(int i = 0; i < count; i++)
+            {
+                Socket socket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-            _sessionFactory = sessionFactory;
+                _sessionFactory = sessionFactory;
 
-            SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-            args.Completed += OnConnectComplete; // Async가 완료되었을때 실행하는 함수 
-            args.RemoteEndPoint = endPoint;
-            args.UserToken = socket; // 전역변수나 매개변수로 보내는 방식보다 args안에 소켓을 넣어놓을 수 있다
+                SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+                args.Completed += OnConnectComplete; // Async가 완료되었을때 실행하는 함수 
+                args.RemoteEndPoint = endPoint;
+                args.UserToken = socket; // 전역변수나 매개변수로 보내는 방식보다 args안에 소켓을 넣어놓을 수 있다
 
-            RegisterConnect(args);
+                RegisterConnect(args);
+            }
         }
 
         void RegisterConnect(SocketAsyncEventArgs args)

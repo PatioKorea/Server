@@ -10,6 +10,9 @@ namespace Server
 {
     class ClientSession : PacketSession
     {
+        public int SessionId { get; set; }
+        public GameRoom Room { get; set; }
+
         public override void OnConnected(EndPoint endPoint)
         {
             Console.WriteLine($"OnConnected : {endPoint}");
@@ -28,43 +31,24 @@ namespace Server
 
             // 위 작업은 ServerSession과 ClientSession에서 처리한다 
 
-            Thread.Sleep(5000);
-            Disconnect();
+
+            Program.Room.Enter(this);
         }
 
         public override void OnRecvPacket(ArraySegment<byte> buffer)
         {
-            ushort count = 0;
-
-            ushort size = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
-            count += 2;
-            ushort id = BitConverter.ToUInt16(buffer.Array, buffer.Offset + count);
-            count += 2;
-
-            switch ((PacketID)id)
-            {
-                case PacketID.PlayerInfoReq:
-                    {
-                        PlayerInfoReq req = new PlayerInfoReq();
-                        req.Read(buffer);
-
-                        //long playerId = BitConverter.ToUInt16(buffer.Array, buffer.Offset + count);
-                        //count += 8;
-                        Console.WriteLine($"PlayerInfoReq : {req.playerId} , {req.name}");
-
-                        foreach (PlayerInfoReq.Skill skill in req.skills)
-                        {
-                            Console.WriteLine($"Skill : {skill.id} , {skill.level} , {skill.duration}");
-                        }
-                    }
-                    break;
-            }
-
-            Console.WriteLine($"RecvPacket [ Size : {size} , Id : {id} ]");
+            PacketManager.Instance.OnRecvPacket(this, buffer);
         }
 
         public override void OnDisconnected(EndPoint endPoint)
         {
+            SessionManager.Instance.Remove(this);
+            if(Room != null)
+            {
+                Room.Leave(this);
+                Room = null;
+            }
+
             Console.WriteLine($"OnDisconnected : {endPoint}");
         }
 

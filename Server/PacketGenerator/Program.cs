@@ -10,6 +10,9 @@ namespace PacketGenerator
         static ushort packetId; // 패킷개수 카운팅 변수 
         static string packetEnums;
 
+        static string clientRegister; // 클라로 보내는 패킷
+        static string serverRegister; // 서버로 보내는 패킷
+
         // args 를 외부의 bat파일에서 인자를 넘겨줄 수 있음 
         static void Main(string[] args)
         {
@@ -44,6 +47,11 @@ namespace PacketGenerator
                 string fileText = string.Format(PacketFormat.fileFormat, packetEnums, genPackets);
                 // 만든 템플릿을 하나의 파일로 만든다 (만들파일 , 자동화코드)
                 File.WriteAllText("GenPacket.cs", fileText);
+
+                string clientManagerText = string.Format(PacketFormat.managerFormat, clientRegister);
+                File.WriteAllText("ClientPacketManager.cs", clientManagerText);
+                string serverManagerText = string.Format(PacketFormat.managerFormat, serverRegister);
+                File.WriteAllText("ServerPacketManager.cs", serverManagerText);
             }
         }
 
@@ -76,6 +84,19 @@ namespace PacketGenerator
             packetEnums += string.Format(PacketFormat.packetEnumFormat
                 , packetName, ++packetId)
                 + Environment.NewLine + "\t"; // 엔터키누른거 같이 정렬 
+
+            // 패킷의 용도에 따른 분기점을 표시하는 규율으로 가른다 
+            if (packetName.StartsWith("S_") || packetName.StartsWith("s_")) {
+                clientRegister += string.Format(PacketFormat.managerRegisterFormat,
+                    packetName)
+                    + Environment.NewLine;
+            }
+            else {
+                // PacketManager안 변수 추가 과정 
+                serverRegister += string.Format(PacketFormat.managerRegisterFormat,
+                    packetName)
+                    + Environment.NewLine;
+            }
 
         }
 

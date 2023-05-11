@@ -20,7 +20,9 @@ namespace DummyClient
 
             Thread.Sleep(100);
 
-            connector.Connect(endPoint, () => { return new ServerSession(); });
+            connector.Connect(endPoint, 
+                () => { return SessionManager.Instance.Generate(); },
+                10);
 
             while (true)
             {
@@ -28,14 +30,14 @@ namespace DummyClient
 
                 try
                 {
-
+                    SessionManager.Instance.SendForEach();
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.ToString());
                 }
 
-                Thread.Sleep(100);
+                Thread.Sleep(250);
             }
         }
     }
