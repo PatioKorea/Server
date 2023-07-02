@@ -13,20 +13,23 @@ namespace ServerCore
         // 바로위에 코드와 다른 점은 Action은 받는 인자가 있고 Func는 뱉어주는 인자가 있다 
         Func<Session> _sessionFactory; // Session을 뱉어준다 
 
-        public void Init(IPEndPoint endPoint, Func<Session> sessionFactory)
+        public void Init(IPEndPoint endPoint, Func<Session> sessionFactory, int register = 10, int backlog = 100)
         {
             _listenSocket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             _sessionFactory += sessionFactory; // 모든 작업이 끝남을 알려주는 이벤트 등록
 
             _listenSocket.Bind(endPoint); // 문지기 교육
-            _listenSocket.Listen(10);// backlog -> 10 : 최대 대기수
+            _listenSocket.Listen(backlog);// backlog -> 10 : 최대 대기수
 
-            // pending이 참일때 이벤트를 걸어놓는다
-            SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-            // 미뤄둔 Accept가 실행되었다면 델리게이트에 함수를 실행시킨다 ( 이벤트 발생 )
-            args.Completed += new EventHandler<SocketAsyncEventArgs>(OnAcceptComplete);
-            // 첫 번째로 들어올 정보를 Accept하기위해서 미리 이벤트를 걸어둔다 , 미리 등록해놓는다
-            ResisterAccept(args);
+            for(int i = 0; i < register; i++)
+            {
+                // pending이 참일때 이벤트를 걸어놓는다
+                SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+                // 미뤄둔 Accept가 실행되었다면 델리게이트에 함수를 실행시킨다 ( 이벤트 발생 )
+                args.Completed += new EventHandler<SocketAsyncEventArgs>(OnAcceptComplete);
+                // 첫 번째로 들어올 정보를 Accept하기위해서 미리 이벤트를 걸어둔다 , 미리 등록해놓는다
+                ResisterAccept(args);
+            }
         }
 
         // Accept의 동작을 미뤄놓는다 ( 등록 해놓는다 )

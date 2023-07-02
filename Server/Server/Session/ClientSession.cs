@@ -8,6 +8,7 @@ using ServerCore;
 
 namespace Server
 {
+    // Script Infomation : 식당 대리자가 들고 있는 휴대폰
     class ClientSession : PacketSession
     {
         public int SessionId { get; set; }
@@ -17,8 +18,8 @@ namespace Server
         {
             Console.WriteLine($"OnConnected : {endPoint}");
 
+            #region 동기식 코드
             //Packet packet = new Packet() { size = 100, packetId = 10 };
-
             //ArraySegment<byte> openSegment = SendBufferHelper.Open(4096);
             //byte[] buffer = BitConverter.GetBytes(packet.size);
             //byte[] buffer2 = BitConverter.GetBytes(packet.packetId);
@@ -26,13 +27,11 @@ namespace Server
             //Array.Copy(buffer2, 0, openSegment.Array, openSegment.Offset + buffer.Length, buffer2.Length);
             //ArraySegment<byte> sendBuff = SendBufferHelper.Close(buffer.Length + buffer2.Length);
             //byte[] sendBuff = Encoding.UTF8.GetBytes("서버에 접속하셨습니다 !!");
-
             //Send(sendBuff);
-
             // 위 작업은 ServerSession과 ClientSession에서 처리한다 
+            #endregion
 
-
-            Program.Room.Enter(this);
+            Program.Room.Push(() => Program.Room.Enter(this));
         }
 
         public override void OnRecvPacket(ArraySegment<byte> buffer)
@@ -45,7 +44,8 @@ namespace Server
             SessionManager.Instance.Remove(this);
             if(Room != null)
             {
-                Room.Leave(this);
+                GameRoom room = Program.Room;
+                room.Push(() => room.Leave(this));
                 Room = null;
             }
 
@@ -54,7 +54,7 @@ namespace Server
 
         public override void OnSend(int numOfBytes)
         {
-            Console.WriteLine($"Transferred bytes : {numOfBytes}");
+            //Console.WriteLine($"Transferred bytes : {numOfBytes}");
         }
     }
 }

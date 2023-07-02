@@ -21,6 +21,7 @@ namespace ServerCore
         {
             // 처리된 데이터 양 
             int processLen = 0;
+            int packetCount = 0;
 
             while (true)
             {
@@ -39,10 +40,15 @@ namespace ServerCore
                 // buffer.Slice( Array 범위 )로 buffer를 잘라서 넘겨줄 수 있지만 가독성면에서 위의 코드가 더 좋다
                 // 또한 ArraySegment는 구조체라서 힙 영역에 할당되기 때문에 new를 남발해도 별 상관이 없다 
 
+                packetCount++;
+
                 processLen += dataSize;
                 // 커서를 옮기는 개념과 비슷하다. 한 패킷단위를 처리했으니 다음 패킷의 위치로 재 조정을 해주는 코드 
                 buffer = new ArraySegment<byte>(buffer.Array, buffer.Offset + dataSize, buffer.Count - dataSize);
             }
+
+            if(packetCount > 1)
+                Console.WriteLine($"패킷 모아 보내기 : {packetCount}");
 
             return processLen;
         }
@@ -55,7 +61,7 @@ namespace ServerCore
         Socket _socket;
         int _disconnected = 0;
 
-        RecvBuffer _recvBuffer = new RecvBuffer(1024);
+        RecvBuffer _recvBuffer = new RecvBuffer(65535);
 
         Object _lock = new object();
         Queue<ArraySegment<byte>> _sendQueue = new Queue<ArraySegment<byte>>();
@@ -94,6 +100,25 @@ namespace ServerCore
             _sendArgs.Completed += new EventHandler<SocketAsyncEventArgs>(OnSendCompleted);
 
             ResisterRecv();
+        }
+
+        public void Send(List<ArraySegment<byte>> sendBuffList)
+        {
+            if (sendBuffList.Count == 0) return;
+
+            lock (_lock)
+            {
+                // 모은 패킷을 하나씩 예약을 걸어둔다
+                foreach(ArraySegment<byte> sendBuff in sendBuffList)
+                {
+                    // 보낼 버퍼를 Queue에 삽입 
+                    _sendQueue.Enqueue(sendBuff);
+                }
+                if (_pendingList.Count == 0)
+                {
+                    ResisterSend();
+                }
+            }
         }
 
         // Recv처럼 올때까지 계속기다리는 것이 아닌 보내고 싶을때만 호출하는 방식 
@@ -170,33 +195,36 @@ namespace ServerCore
 
         void OnSendCompleted(Object sender, SocketAsyncEventArgs args)
         {
-            if (args.BytesTransferred > 0 && args.SocketError == SocketError.Success)
+            lock (_lock) // 이벤트 핸들러에서 멀티쓰레드가 동시에 이 함수호출할수 있기 때문
             {
-                try
+                if (args.BytesTransferred > 0 && args.SocketError == SocketError.Success)
                 {
-                    // 모든 처리가 완료되고 남은 데이터를 보냈기 때문에 초기화 해준다 
-                    _sendArgs.BufferList = null;
-                    _pendingList.Clear();
-
-                    // 아래줄 코드의 기능을 대신하는 추상 함수 
-                    OnSend(_sendArgs.BytesTransferred);
-                    //Console.WriteLine($"Transferred bytes : {_sendArgs.BytesTransferred}");
-
-                    if (_sendQueue.Count > 0)
+                    try
                     {
-                        //예약하는 동안에 처리가 안된 큐들을 처리 (쌓였던 큐의 실질적인 처리) 
-                        ResisterSend();
-                    }
+                        // 모든 처리가 완료되고 남은 데이터를 보냈기 때문에 초기화 해준다 
+                        _sendArgs.BufferList = null;
+                        _pendingList.Clear();
 
+                        // 아래줄 코드의 기능을 대신하는 추상 함수 
+                        OnSend(_sendArgs.BytesTransferred);
+                        //Console.WriteLine($"Transferred bytes : {_sendArgs.BytesTransferred}");
+
+                        if (_sendQueue.Count > 0)
+                        {
+                            //예약하는 동안에 처리가 안된 큐들을 처리 (쌓였던 큐의 실질적인 처리) 
+                            ResisterSend();
+                        }
+
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"OnSendCompleted Failed {e}");
+                    }
                 }
-                catch (Exception e)
+                else
                 {
-                    Console.WriteLine($"OnSendCompleted Failed {e}");
+                    Disconnect();
                 }
-            }
-            else
-            {
-                Disconnect();
             }
         }
 
@@ -229,8 +257,8 @@ namespace ServerCore
 
         void OnRecvCompleted(Object sender, SocketAsyncEventArgs args)
         {
-            lock (_lock) // 이벤트 핸들러에서 멀티쓰레드가 동시에 이 함수호출할수 있기 때문
-            {
+            //lock (_lock) 실수의 흔적...OnSendCompleted에 썼어야 했음
+            //{
                 // 가끔 받은 내용물이 0바이트가 올수도 있기 때문에 && 소켓에러가 나지 않았을때 
                 if (args.BytesTransferred > 0 && args.SocketError == SocketError.Success)
                 {
@@ -276,7 +304,7 @@ namespace ServerCore
                 {
                     Disconnect();
                 }
-            }
+            //}
         }
 
         #endregion

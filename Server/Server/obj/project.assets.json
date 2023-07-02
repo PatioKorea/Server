@@ -27,19 +27,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\hihit\\.nuget\\packages\\": {}
+    "C:\\Users\\사용자\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\hihit\\OneDrive\\문서\\GitHub\\Server\\Server\\Server\\Server.csproj",
+      "projectUniqueName": "C:\\Users\\사용자\\Documents\\GitHub\\Server\\Server\\Server\\Server.csproj",
       "projectName": "Server",
-      "projectPath": "C:\\Users\\hihit\\OneDrive\\문서\\GitHub\\Server\\Server\\Server\\Server.csproj",
-      "packagesPath": "C:\\Users\\hihit\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\hihit\\OneDrive\\문서\\GitHub\\Server\\Server\\Server\\obj\\",
+      "projectPath": "C:\\Users\\사용자\\Documents\\GitHub\\Server\\Server\\Server\\Server.csproj",
+      "packagesPath": "C:\\Users\\사용자\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\사용자\\Documents\\GitHub\\Server\\Server\\Server\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\hihit\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\사용자\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -53,8 +53,8 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "projectReferences": {
-            "C:\\Users\\hihit\\OneDrive\\문서\\GitHub\\Server\\Server\\ServerCore\\ServerCore.csproj": {
-              "projectPath": "C:\\Users\\hihit\\OneDrive\\문서\\GitHub\\Server\\Server\\ServerCore\\ServerCore.csproj"
+            "C:\\Users\\사용자\\Documents\\GitHub\\Server\\Server\\ServerCore\\ServerCore.csproj": {
+              "projectPath": "C:\\Users\\사용자\\Documents\\GitHub\\Server\\Server\\ServerCore\\ServerCore.csproj"
             }
           }
         }
@@ -74,16 +74,35 @@
           "net47",
           "net471",
           "net472",
-          "net48"
+          "net48",
+          "net481"
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[3.1.10, 3.1.10]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.win-x64",
+            "version": "[3.1.32, 3.1.32]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[3.1.0, 3.1.0]"
+          },
+          {
+            "name": "Microsoft.WindowsDesktop.App.Ref",
+            "version": "[3.1.0, 3.1.0]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.415\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.304\\RuntimeIdentifierGraph.json"
       }
     }
   }

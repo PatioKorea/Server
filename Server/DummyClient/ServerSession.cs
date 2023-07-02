@@ -6,6 +6,7 @@ using ServerCore;
 
 namespace DummyClient
 {
+    // Script Infomation : 식당 손님이 들고 있는 휴대폰
     class ServerSession : PacketSession
     {
         //static unsafe void ToBytes(byte[] array, int offset, ulong value)

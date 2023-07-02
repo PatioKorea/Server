@@ -1,8 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "RcZxFiA1Oyj0hkvRj7IWP5jKe82CnOxNtE2fzGjiUASOU0BnUhGNWmCiF56RLDoK7F8LPIuR+61I1M/5Xmoe1Q==",
+  "dgSpecHash": "EhDiv5XhqdPXguMouygLqjybY6iWIbZk/joNph6uTdqR7+KdE0mlDOd/V0bk3XVicc9W6j+/GbUKR2SvNuOQJQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\hihit\\OneDrive\\문서\\GitHub\\Server\\Server\\Server\\Server.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\사용자\\Documents\\GitHub\\Server\\Server\\Server\\Server.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\사용자\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\3.1.0\\microsoft.windowsdesktop.app.ref.3.1.0.nupkg.sha512",
+    "C:\\Users\\사용자\\.nuget\\packages\\microsoft.netcore.app.ref\\3.1.0\\microsoft.netcore.app.ref.3.1.0.nupkg.sha512",
+    "C:\\Users\\사용자\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.1.10\\microsoft.aspnetcore.app.ref.3.1.10.nupkg.sha512",
+    "C:\\Users\\사용자\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.1.32\\microsoft.netcore.app.host.win-x64.3.1.32.nupkg.sha512"
+  ],
   "logs": []
 }

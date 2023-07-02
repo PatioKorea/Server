@@ -4,8 +4,11 @@ using System.Text;
 
 namespace DummyClient
 {
+    // 유저는 각자 하나의 대리자와 연결된 휴대폰을 들고 있는데
+    // 그 휴대폰을 관리하는 곳이다.
     class SessionManager
     {
+        // 싱글톤 패턴
         static SessionManager _session = new SessionManager();
         public static SessionManager Instance { get { return _session; } }
 

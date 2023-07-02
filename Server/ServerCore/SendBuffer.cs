@@ -9,7 +9,7 @@ namespace ServerCore
         public static ThreadLocal<SendBuffer> CurrentBuffer = new ThreadLocal<SendBuffer>(() => { return null; });
 
         // 기본 버퍼생성 크기 ( 변경가능 )
-        public static int ChunkSize { get; set; } = 4096 * 100;
+        public static int ChunkSize { get; set; } = 65535 * 100;
 
         // reserveSize : 버퍼를 사용할 최대치의 크기를 입력받고 현재 사용가능한지 판단 
         public static ArraySegment<byte> Open(int reserveSize)

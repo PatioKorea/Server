@@ -12,6 +12,12 @@ namespace Server
         static Listener _listener = new Listener();
         public static GameRoom Room = new GameRoom();
 
+        static void FlushRoom()
+        {
+            Room.Push(() => Room.Flush());
+            JobTimer.Instance.Push(FlushRoom, 250);
+        }
+
         static void Main(string[] args)
         {
 
@@ -26,11 +32,13 @@ namespace Server
 
             Console.WriteLine("서버 기다리는 중...");
 
-            // 위에 코드가 아래의 역할을 하기 때문에 아래는 프로그램이 꺼지지않도록 방어하는 역할
+
+            //FlushRoom();
+            JobTimer.Instance.Push(FlushRoom);
+
             while (true)
             {
-                //Socket clientSocket = _listener.Accept();
-                ;
+                JobTimer.Instance.Flush();
             }
 
         }
