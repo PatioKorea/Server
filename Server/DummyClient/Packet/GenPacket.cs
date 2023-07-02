@@ -27,53 +27,37 @@ class C_Chat : IPacket
 
     public void Read(ArraySegment<byte> segment)
     {
-        ushort count = 0;
-
-        ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
-
+        ushort count = 0;   
         count += sizeof(ushort);
         count += sizeof(ushort);
         //string헤더 
-		ushort chatLen = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
+		ushort chatLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
 		count += sizeof(ushort);
 		
-		// Byte에서 string으로 변환
-		this.chat = Encoding.Unicode.GetString(s.Slice(count, chatLen));
+		this.chat = Encoding.Unicode.GetString(segment.Array, segment.Offset + count, chatLen);
 		count += chatLen;
 		
     }
 
     public ArraySegment<byte> Write()
     {
-        // 포인터 같이 Array를 받고 여기서 수정해도 Open된 Array가 수정되고 적용된다 
         ArraySegment<byte> segment = SendBufferHelper.Open(4096);
 
-        ushort count = 0; // 바이트의 수를 체크하는 변수 (커서) 
-        bool success = true;
+        ushort count = 0;
 
-        Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
-
-        // 강의 Serialization 1강 , 2강 , 3강 
-        // TryWriteBytes : 2번째 인자값을 왼쪽 배열에 넣어준다 두번째 인자값은 자료형에 따라서 바이트의 수가 결정된다
-        // Slice() span값자체가 잘라지지 않고 잘라낸 부분만 span타입으로 반환한다 
         count += sizeof(ushort);
-        success &=
-            BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.C_Chat);
+        Array.Copy(BitConverter.GetBytes((ushort)PacketID.C_Chat), 0, segment.Array, segment.Offset + count, sizeof(ushort));
         count += sizeof(ushort);
 
         ushort chatLen = (ushort)Encoding.Unicode.GetBytes
 		    (this.chat, 0, this.chat.Length, segment.Array, segment.Offset + count + sizeof(ushort));
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), chatLen);
+		
+		Array.Copy(BitConverter.GetBytes(chatLen), 0, segment.Array, segment.Offset + count, sizeof(ushort));
 		count += sizeof(ushort);
 		count += chatLen;
 		
-            
-        // count 데이터 밀어넣기 
-        success &=
-            BitConverter.TryWriteBytes(s, count);
 
-        if (success == false)
-            return null;
+        Array.Copy(BitConverter.GetBytes(count), 0, segment.Array, segment.Offset, sizeof(ushort));
 
         return SendBufferHelper.Close(count);
     }
@@ -88,60 +72,43 @@ class S_Chat : IPacket
 
     public void Read(ArraySegment<byte> segment)
     {
-        ushort count = 0;
-
-        ReadOnlySpan<byte> s = new ReadOnlySpan<byte>(segment.Array, segment.Offset, segment.Count);
-
+        ushort count = 0;   
         count += sizeof(ushort);
         count += sizeof(ushort);
-        this.playerId = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+        this.playerId = BitConverter.ToInt32(segment.Array, segment.Offset + count);
 		count += sizeof(int);
 		
 		//string헤더 
-		ushort chatLen = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
+		ushort chatLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
 		count += sizeof(ushort);
 		
-		// Byte에서 string으로 변환
-		this.chat = Encoding.Unicode.GetString(s.Slice(count, chatLen));
+		this.chat = Encoding.Unicode.GetString(segment.Array, segment.Offset + count, chatLen);
 		count += chatLen;
 		
     }
 
     public ArraySegment<byte> Write()
     {
-        // 포인터 같이 Array를 받고 여기서 수정해도 Open된 Array가 수정되고 적용된다 
         ArraySegment<byte> segment = SendBufferHelper.Open(4096);
 
-        ushort count = 0; // 바이트의 수를 체크하는 변수 (커서) 
-        bool success = true;
+        ushort count = 0;
 
-        Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
-
-        // 강의 Serialization 1강 , 2강 , 3강 
-        // TryWriteBytes : 2번째 인자값을 왼쪽 배열에 넣어준다 두번째 인자값은 자료형에 따라서 바이트의 수가 결정된다
-        // Slice() span값자체가 잘라지지 않고 잘라낸 부분만 span타입으로 반환한다 
         count += sizeof(ushort);
-        success &=
-            BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.S_Chat);
+        Array.Copy(BitConverter.GetBytes((ushort)PacketID.S_Chat), 0, segment.Array, segment.Offset + count, sizeof(ushort));
         count += sizeof(ushort);
 
-        success &=
-		    BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), this.playerId);
+        Array.Copy(BitConverter.GetBytes(this.playerId), 0, segment.Array, segment.Offset + count, sizeof(int));
 		count += sizeof(int);
 		
 		ushort chatLen = (ushort)Encoding.Unicode.GetBytes
 		    (this.chat, 0, this.chat.Length, segment.Array, segment.Offset + count + sizeof(ushort));
-		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), chatLen);
+		
+		Array.Copy(BitConverter.GetBytes(chatLen), 0, segment.Array, segment.Offset + count, sizeof(ushort));
 		count += sizeof(ushort);
 		count += chatLen;
 		
-            
-        // count 데이터 밀어넣기 
-        success &=
-            BitConverter.TryWriteBytes(s, count);
 
-        if (success == false)
-            return null;
+        Array.Copy(BitConverter.GetBytes(count), 0, segment.Array, segment.Offset, sizeof(ushort));
 
         return SendBufferHelper.Close(count);
     }

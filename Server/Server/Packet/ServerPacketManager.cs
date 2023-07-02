@@ -22,8 +22,10 @@ class PacketManager
 
     public void Register()
     {
-        _onRecv.Add((ushort)PacketID.C_Chat, MakePacket<C_Chat>);
-        _handler.Add((ushort)PacketID.C_Chat, PacketHandler.C_ChatHandler); 
+       _onRecv.Add((ushort)PacketID.C_Chat, MakePacket<C_Chat>);
+        _handler.Add((ushort)PacketID.C_Chat, PacketHandler.C_ChatHandler);
+
+        
     }
 
     public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)
